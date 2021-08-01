@@ -35,20 +35,30 @@ def get_Serial_Communication_Data():
             while(True):
 
                 receivedMsg = serial.readline()
-
                 if ((len(receivedMsg) >= 4) and (receivedMsg[3] == b':'[0])):
 
                     msgType = receivedMsg[0:3]
                     msgData = receivedMsg[4:]
-                    if (msgType == b'LTL'):
-                       APP_DATA['lightLevel'] = msgData.decode('ascii')
-                       print(APP_DATA['lightLevel'])
-                    elif(msgType == b'RMTP'):
-                        APP_DATA['roomTemprature'] = msgData.decode('ascii')
-                        print(APP_DATA['roomTemprature'])
+                    
+                    if ( msgType == b'TIM' ):
+                        timeString = datetime.now().strftime('%H:%M') 
+                        sendMsg = b'TIM:' + timeString.encode('ascii')
+                        serial.write(sendMsg + b'\n')
+
+                    elif ( msgType == b'DAT' ):
+                        dateString = datetime.now().strftime('%d-%b-%Y') 
+                        sendMsg = b'DAT:' + dateString.encode('ascii')
+                        serial.write(sendMsg + b'\n')
+                    elif (msgType == b'LTL'):
+                           APP_DATA['lightLevel'] = msgData.decode('ascii')
+                           print(msgData.decode('ascii'))
+                    elif(msgType == b'RTMP'):
+                            APP_DATA['roomTemprature'] = msgData.decode('ascii')
+                            print(APP_DATA['roomTemprature'])
                 currentTime = time.time()
                 if (currentTime > nextCompassPoll):
-                    serial.write(b'CMP:\n')
+                    serial.write(b'LTL:\n')
+                    serial.write(b'RTMP:n')
                     nextCompassPoll = currentTime + 2.0
         else:
 
@@ -89,16 +99,17 @@ def create_window():
 def main(refresh_rate):
     """ The main program routine """
     timeout_minutes = refresh_rate * (60 * 1000)
-
+    
     # Try to get the current users ip location
-    try:
-      get_Serial_Communication_Data()
-    except ConnectionError:
-        pass
+#     try:
+#         print('Hello')
+#         get_Serial_Communication_Data()
+#     except ConnectionError:
+#         pass
 
     # Create main window
     window = create_window()
-
+    get_Serial_Communication_Data()
     # Event loop
     while True:
         event, _ = window.read(timeout=timeout_minutes)
