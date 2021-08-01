@@ -35,7 +35,7 @@ if ( os.path.isdir(serialDevDir) ):
                     sendMsg = b'DAT:' + dateString.encode('ascii')
                     serial.write(sendMsg + b'\n')
 
-                elif ( msgType == b'CMP' ):
+                elif ( msgType == b'LT' ):
                     print('Compass Bearing = ' + msgData.decode('ascii'))
 
             currentTime = time.time() 
