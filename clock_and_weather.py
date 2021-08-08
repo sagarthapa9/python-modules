@@ -2,6 +2,7 @@
 import PySimpleGUI as sg
 import datetime
 import calendar
+import os
 #import forecastio
 
 '''
@@ -71,6 +72,7 @@ class GUI():
                                 background_color='black', grab_anywhere=True,
                                 use_default_focus=False, no_titlebar=True,
                                 alpha_channel=.8)
+        self.window.Maximize()
 
         self.colon_elem = self.window['-colon-']
         self.hour1 = self.window['-hour1-']
@@ -122,7 +124,9 @@ def led_clock():
 
     # Get the GUI object that is used to update the window
     gui = GUI()
-
+    if os.environ.get('DISPLAY','')== '':
+        print('no display found. Using:0.0')
+        os.environ.__setitem__('DISPLAY',':0.0')
     # ---------- EVENT LOOP ----------
     last_update_time = 0
     while True:

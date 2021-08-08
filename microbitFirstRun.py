@@ -4,15 +4,11 @@ from datetime import datetime
 from serial import Serial
 import PySimpleGUI as sg
 
-microbit_data={
-'temp':0,
-'lightLevel':0,
-    }
-
+microbit_data = {
+    'temp': 0,
+    'lightLevel': 0,
+}
 global layout
-
-        
-
 
 def loadData():
     nxtLtlPoll = 0.0
@@ -29,7 +25,6 @@ def loadData():
             while( True ):
 
                 receivedMsg = serial.readline() 
-                print(receivedMsg)
                 if ( (len(receivedMsg) >= 4) and (receivedMsg[3] == b':'[0])):
 
                     msgType = receivedMsg[0:3] 
@@ -52,6 +47,7 @@ def loadData():
                         microbit_data['lightLevel'] = msgData.decode('ascii').rstrip()
                         
                     return microbit_data
+                    
                 currentTime = time.time() 
                 if ( currentTime > nxtLtlPoll ):
                     serial.write(b'LTL:\n' )
@@ -61,16 +57,15 @@ def loadData():
                     serial.write(b'TMP:\n')
                     nxtTmpPoll = currentTime + 2.0 
                     
-            else:
+                else:
 
-                print('No serial devices connected') 
+                 print('No serial devices connected') 
 
         else:
 
              print('No serial devices connected') 
 
 
-#layout= [[[sg.Text("temp")],[sg.Text(microbit_data['temp'],size=(10,2), key='-TMP-')]],[sg.Button("OK")]]
 layout= [[[sg.Text("Light Level")],[sg.Text(microbit_data['lightLevel'],size=(10,2), key='-LTL-')]],[[sg.Text("Room Temp")],[sg.Text(microbit_data['temp'],size=(10,2), key='-TMP-')]],[sg.Button("OK")]]
 #Create the window
 window = sg.Window("Demo", layout)
